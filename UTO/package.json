@@ -1,0 +1,27 @@
+{
+  "name": "UTO",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "test": "embark test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "embark": "^5.2.3",
+    "embark-geth": "^5.2.3",
+    "embark-graph": "^5.2.3",
+    "embark-ipfs": "^5.2.3",
+    "embark-parity": "^5.2.3",
+    "embark-profiler": "^5.2.3",
+    "embark-swarm": "^5.2.3",
+    "embark-whisper-geth": "^5.2.3",
+    "embarkjs": "^5.2.3",
+    "embarkjs-ens": "^5.2.3",
+    "embarkjs-ipfs": "^5.2.3",
+    "embarkjs-swarm": "^5.2.3",
+    "embarkjs-web3": "^5.2.3",
+    "embarkjs-whisper": "^5.2.3"
+  }
+}
