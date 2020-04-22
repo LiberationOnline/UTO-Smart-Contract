@@ -1,2 +1,2 @@
-# UTO
+# UTO Smart Contract
 UTO Smart Contract
