@@ -1,11 +1,73 @@
 <html>
   <head>
-    <title>Embark</title>
+    <title>UTO</title>
     <link rel="stylesheet" href="css/app.css">
     <script src="js/app.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   </head>
   <body>
-    <h3>Welcome to Embark!</h3>
-    <p>See the <a href="https://framework.embarklabs.io/docs/quick_start.html" target="_blank">Embark's documentation</a> to see what you can do with Embark!</p>
+    
+    <section class="hero is-success">
+      <!-- Hero head: will stick at the top -->
+      <div class="hero-head">
+        <header class="navbar">
+          <div class="container">
+            <div class="navbar-brand">
+              <a class="navbar-item">
+                <!--<img src="https://bulma.io/images/bulma-type-white.png" alt="Logo">-->
+                <span class="icon is-large"><i class="fas fa-cubes fa-3x"></i></span>
+              </a>
+              <span class="navbar-burger burger" data-target="navbarMenuHeroC">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+            <div id="navbarMenuHeroC" class="navbar-menu">
+              <div class="navbar-end">
+                <a class="navbar-item is-active">Home</a>
+                <a class="navbar-item">Demo</a>
+                <a class="navbar-item">Documentation</a>
+                <span class="navbar-item">
+                  <a class="button is-success is-inverted" href="https://github.com/LiberationOnline/UTO-Smart-Contract" target="_blank">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Download</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
+    
+      <!-- Hero content: will be in the middle -->
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title">
+            Unlimited Token Offer (UTO)
+          </h1>
+          <h2 class="subtitle">
+            A honest, fairer and safer alternative to ICOs
+          </h2>
+        </div>
+      </div>
+    
+      <!-- Hero footer: will stick at the bottom -->
+      <div class="hero-foot">
+        <nav class="tabs is-boxed">
+          <div class="container">
+            <ul>
+              <li class="is-active"><a>Overview</a></li>
+              <li><a>Demo</a></li>
+              <li><a>Configurator</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </section>
+
   </body>
 </html>
