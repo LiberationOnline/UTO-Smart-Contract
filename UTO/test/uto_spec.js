@@ -1,6 +1,11 @@
 const UTO = artifacts.require('UTO');
 const {Utils} = artifacts.require("EmbarkJS");
+const { should, EVMThrow, EVMInvalid } = require('./helpers');
 let accounts;
+
+const _name = "UnlimitedToken";
+const _symbol = "UTO";
+const _decimals = 18;
 
 config({
     deployment: {
@@ -9,6 +14,7 @@ config({
         // see https://framework.embarklabs.io/docs/contracts_testing.html#Configuring-accounts
         {   
             nodeAccounts: true,
+            numAddresses: "5",
             password: 'config/development/password',
             balance: '10 ether'
         }
@@ -16,28 +22,57 @@ config({
     },
     contracts: {
         deploy: {
-            "UTO": {}
+            "UTO": {
+                args: {
+                    _company: '$accounts[1]'
+                }
+            }
         }
     }
   }, (_err, web3_accounts) => {
     accounts = web3_accounts
   });
 
+
 contract('UTO', function() {
 
-    it("should have an address", async function () { assert.fail('test not implemented') });
+    // Runs once at start of test suite
+    before(async function() {
+        //console.log(accounts);
+        [owner, company, tokenowner, donator, customer] = accounts;
+    });
 
-    it("should have the correct token name", async function () { assert.fail('test not implemented') });
+    //----Bring on the tests----//
 
-    it("should have the correct token symbol", async function () { assert.fail('test not implemented') });
+    it("should have an address", async function () { 
+        //console.log(UTO.address);
+        web3.utils.isAddress(UTO.address).should.be.true;
+     });
+
+    it("should have the correct token name", async function () { 
+        (await UTO.name()).should.equal(_name);
+    });
+
+    it("should have the correct token symbol", async function () { 
+        (await UTO.symbol()).should.equal(_symbol);
+     });
     
-    it("should have the correct number of decimals", async function () { assert.fail('test not implemented') });
+    it("should have the correct number of decimals", async function () { 
+        let decimals = await (UTO.decimals());
+        decimals.should.bignumber.equal(_decimals);
+     });
     
-    it("should set owner on contract creation when Ownable", async function () { assert.fail('test not implemented') });
+    it("should set owner on contract creation when Ownable", async function () { 
+        (await UTO.owner()).should.equal(owner);
+     });
     
-    it("should not be paused on contract creation when Pausable", async function () { assert.fail('test not implemented') });
+    it("should not be paused on contract creation when Pausable", async function () { 
+        (await UTO.paused()).should.be.false;
+     });
     
-    it("should set company on contract creation", async function () { assert.fail('test not implemented') });
+    it("should set company on contract creation", async function () { 
+        (await UTO.company()).should.deep.equal(company);
+     });
     
     it("should allow setting new company by owner to valid address", async function () { assert.fail('test not implemented') });
     
