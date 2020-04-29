@@ -1,9 +1,10 @@
 const EVMThrow = 'revert';
 const EVMInvalid = 'invalid opcode';
+const EVMInvalidAddress = 'invalid address';
 const BigNumber = web3.BigNumber;
 const should = require('chai')
     .use(require('chai-as-promised'))
     .use(require('chai-bignumber')(BigNumber))
     .should()
 
-module.exports = { should, EVMThrow, EVMInvalid }
+module.exports = { should, EVMThrow, EVMInvalid, EVMInvalidAddress }

@@ -1,17 +1,16 @@
 const UTO = artifacts.require('UTO');
 const {Utils} = artifacts.require("EmbarkJS");
-const { should, EVMThrow, EVMInvalid } = require('./helpers');
+const { should, EVMThrow, EVMInvalid, EVMInvalidAddress } = require('./helpers');
 let accounts;
 
 const _name = "UnlimitedToken";
 const _symbol = "UTO";
 const _decimals = 18;
+const _percentForBeneficiary = 10
 
 config({
     deployment: {
       accounts: [
-        // you can configure custom accounts with a custom balance
-        // see https://framework.embarklabs.io/docs/contracts_testing.html#Configuring-accounts
         {   
             nodeAccounts: true,
             numAddresses: "5",
@@ -24,7 +23,9 @@ config({
         deploy: {
             "UTO": {
                 args: {
-                    _company: '$accounts[1]'
+                    _beneficiary: '$accounts[1]',
+                    _tokensPerEth: 1000,
+                    _percentForBeneficiary: _percentForBeneficiary
                 }
             }
         }
@@ -38,14 +39,33 @@ contract('UTO', function() {
 
     // Runs once at start of test suite
     before(async function() {
-        //console.log(accounts);
-        [owner, company, tokenowner, donator, customer] = accounts;
+        console.log(accounts);
+        [owner, beneficiary, tokenowner, donator, customer] = accounts;
     });
 
-    //----Bring on the tests----//
+    /**
+     * Runs before each test
+     */
+    beforeEach(async function() {
+
+        //ensure contract is unpaused
+        let isPaused = await UTO.paused();
+            if(isPaused) {
+            await UTO.methods.unpause().send({from: accounts[0]});
+        }
+
+        //reset contract owner
+        let currentOwner = await UTO.owner();
+        await UTO.methods.transferOwnership(owner).send({from: currentOwner});
+
+        //reset beneficiary
+        await UTO.methods.setBeneficiary(beneficiary).send({from: owner});
+    });
+
+    //----BRING ON THEM TESTS----//
 
     it("should have an address", async function () { 
-        //console.log(UTO.address);
+        //console.log(UTO);
         web3.utils.isAddress(UTO.address).should.be.true;
      });
 
@@ -70,27 +90,68 @@ contract('UTO', function() {
         (await UTO.paused()).should.be.false;
      });
     
-    it("should set company on contract creation", async function () { 
-        (await UTO.company()).should.deep.equal(company);
+    it("should set beneficiary on contract creation", async function () { 
+        (await UTO.beneficiary()).should.deep.equal(beneficiary);
+     });
+
+    it("should have the correct percent to hold value", async function () { 
+        let percentForBeneficiary = await (UTO.percentForBeneficiary());
+        percentForBeneficiary.should.bignumber.equal(_percentForBeneficiary);
      });
     
-    it("should allow setting new company by owner to valid address", async function () { assert.fail('test not implemented') });
+    it("should allow setting new beneficiary by owner to valid address", async function () {
+        await UTO.methods.setBeneficiary(owner).send({from: owner});
+        (await UTO.methods.beneficiary().call()).should.deep.equal(owner);
+     });
     
-    it("should not allow setting new company if not owner", async function () { assert.fail('test not implemented') });
+    it("should not allow setting new beneficiary if not owner", async function () { 
+       await UTO.methods.setBeneficiary(owner).send({from: customer}).should.be.rejectedWith(EVMThrow);
+     });
     
-    it("should allow transfer of ownership by owner when Ownable", async function () { assert.fail('test not implemented') });
+    it("should allow transfer of ownership by owner when Ownable", async function () { 
+        let newOwner = accounts[9];
+
+        // set the contract owner
+        await UTO.methods.transferOwnership(newOwner).send( { from: owner });
+
+        // validate the owner has been changed and matches the new address
+        (await UTO.owner()).should.equal(newOwner);
+     });
     
-    it("should not allow transfer of ownership by non-owner when Ownable", async function () { assert.fail('test not implemented') });
+    it("should not allow transfer of ownership by non-owner when Ownable", async function () { 
+        let newOwner = accounts[9];
+
+        await UTO.methods.transferOwnership(newOwner).send({from: beneficiary}).should.be.rejectedWith(EVMThrow);
+     });
     
-    it("should be able to be paused and unpaused by owner when Pausable", async function () { assert.fail('test not implemented') });
+    it("should be able to be paused and unpaused by owner when Pausable", async function () { 
+        await UTO.methods.pause().send({from: owner});
+        (await UTO.paused()).should.be.true;
+        await UTO.methods.unpause().send({from: owner});
+        (await UTO.paused()).should.be.false;
+     });
     
-    it("should not allow pause by non-owner when Pausable", async function () { assert.fail('test not implemented') });
+    it("should not allow pause by non-owner when Pausable", async function () { 
+        await UTO.methods.pause().send({from: accounts[1]}).should.be.rejectedWith(EVMThrow);
+     });
     
-    it("should not allow unpause by non-owner if paused when Pausable", async function () { assert.fail('test not implemented') });
+    it("should not allow unpause by non-owner if paused when Pausable", async function () { 
+        await UTO.methods.pause().send({from: owner});
+        (await UTO.paused()).should.be.true;
+        await UTO.methods.unpause().send({from: accounts[1]}).should.be.rejectedWith(EVMThrow);
+     });
     
-    it("should allow approve() and allowance() when unpaused", async function () { assert.fail('test not implemented') });
+    it("should allow approve() and allowance() when unpaused", async function () { 
+        assert.fail('test not implemented')   
+     });
     
-    it("should not allow approve() when paused", async function () { assert.fail('test not implemented') });
+    it("should not allow approve() when paused", async function () { 
+        await UTO.pause({from: owner});
+        (await UTO.paused()).should.be.true;
+
+        await (UTO.methods.approve(accounts[1], 0).send({from: accounts[0]}))
+            .should.be.rejectedWith(EVMThrow);
+     });
     
     it("should not allow transfer() when paused", async function () { assert.fail('test not implemented') });
     
