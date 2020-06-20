@@ -4,6 +4,6 @@
 development done using embark (embarklabs.io)
 
 In first terminal `embark simulator`
-In second termianl `embark run`
+In second terminal `embark run`
 
 Testing - `embark test`
