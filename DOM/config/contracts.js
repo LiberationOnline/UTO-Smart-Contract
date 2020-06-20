@@ -34,7 +34,7 @@ module.exports = {
       //SimpleStorage: {
       //  args: [ 100 ]
       //}
-      UTO: {
+      DOM: {
         args: {
           _beneficiary: '$accounts[1]',
           _tokensPerEth: 1000,
